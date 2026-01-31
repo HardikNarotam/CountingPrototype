@@ -13,10 +13,20 @@ public class BallShooter : MonoBehaviour
 
     public int availableBalls = 3;
     public Text availableBallsText;
+    public Button shootButton;
+    public Text gameOverText;
+
+    public GameObject counter;
+    private Counter counterScript;
 
     private void Awake()
     {
         input = new InputSystem_Actions();
+    }
+
+    private void Start()
+    {
+        counterScript = counter.GetComponent<Counter>();
     }
 
     private void OnEnable()
@@ -44,14 +54,15 @@ public class BallShooter : MonoBehaviour
         transform.Rotate(0f, yaw, 0f);
 
         availableBallsText.text = "Balls Left: " + availableBalls;
-        if (availableBalls <= 0)
-        {
-            Debug.Log("Game Over! No more balls left.");
-        }
     }
 
     private void ShootBall()
     {
+        if (availableBalls <= 0)
+            return;
+
+        counterScript.scored = false;
+
         Vector3 spawnPos = transform.position + transform.forward * 0.5f;
         GameObject ball = Instantiate(ballPrefab, spawnPos, transform.rotation);
 
@@ -60,5 +71,24 @@ public class BallShooter : MonoBehaviour
         rb.AddForce(shootDir * slider.value * powerStrength, ForceMode.Impulse);
 
         availableBalls--;
+
+        if (availableBalls <= 0)
+        {
+            Invoke(nameof(CheckGameOver), 3f);
+        }
+    }
+
+    private void CheckGameOver()
+    {
+        if (!counterScript.scored)
+        {
+            EndGame();
+        }
+    }
+    public void EndGame()
+    {
+        Debug.Log("Game Over! No more balls left.");
+        shootButton.interactable = false;
+        gameOverText.gameObject.SetActive(true);
     }
 }

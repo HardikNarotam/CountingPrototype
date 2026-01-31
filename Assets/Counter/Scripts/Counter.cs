@@ -12,6 +12,7 @@ public class Counter : MonoBehaviour
     [SerializeField] private BallShooter ballShooter;
 
     private int Count = 0;
+    public bool scored = false;
 
     private void Start()
     {
@@ -20,9 +21,13 @@ public class Counter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        scored = true;
+
         Count += 1;
         CounterText.text = "Count : " + Count;
+
         ballShooter.availableBalls = 3;
+
         transform.position = new Vector3(UnityEngine.Random.Range(-RangeX, RangeX), 0f, UnityEngine.Random.Range(-RangeZ, RangeZ));
     }
 }
