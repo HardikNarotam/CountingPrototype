@@ -11,6 +11,9 @@ public class BallShooter : MonoBehaviour
     [SerializeField] private float powerStrength;
     [SerializeField] private float rotateSpeed;
 
+    public int availableBalls = 3;
+    public Text availableBallsText;
+
     private void Awake()
     {
         input = new InputSystem_Actions();
@@ -39,6 +42,12 @@ public class BallShooter : MonoBehaviour
     {
         float yaw = rotateInput * rotateSpeed * Time.deltaTime;
         transform.Rotate(0f, yaw, 0f);
+
+        availableBallsText.text = "Balls Left: " + availableBalls;
+        if (availableBalls <= 0)
+        {
+            Debug.Log("Game Over! No more balls left.");
+        }
     }
 
     private void ShootBall()
@@ -49,5 +58,7 @@ public class BallShooter : MonoBehaviour
         Rigidbody rb = ball.GetComponent<Rigidbody>();
         Vector3 shootDir = Quaternion.Euler(0f, 0f, -45f) * transform.forward;
         rb.AddForce(shootDir * slider.value * powerStrength, ForceMode.Impulse);
+
+        availableBalls--;
     }
 }
